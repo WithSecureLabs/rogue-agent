@@ -1,0 +1,8 @@
+drozer Endpoint
+---------------
+host:10.0.2.2
+port:31415
+password:
+ssl:false
+ts_path:null
+ts_password:null
