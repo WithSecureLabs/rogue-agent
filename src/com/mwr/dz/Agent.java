@@ -40,7 +40,6 @@ public class Agent extends Service {
 	
 	private void setCustomUID(String uid){
 		if(uid != null && !uid.equals("")){
-			Log.i("sysplugin", "set custom uid: " + uid);
 			SharedPreferences prefs = this.getSharedPreferences("sysplugin", MODE_PRIVATE);
 			Editor edits = prefs.edit();
 			edits.putString(Agent.CREATED_UID_KEY, uid);
@@ -90,7 +89,6 @@ public class Agent extends Service {
 		
 		Agent.INSTANCE = this;
 		Configuration agent_configuration = new Configuration(this.getApplicationContext(), R.raw.agent_prefs);
-		Log.i("sysplugin", "loading uid");
 		this.setCustomUID(agent_configuration.get("uid"));
 		
 		Configuration configuration = new Configuration(this.getApplicationContext(), R.raw.endpoint);
