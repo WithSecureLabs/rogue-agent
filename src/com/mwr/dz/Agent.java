@@ -14,12 +14,17 @@ import com.mwr.jdiesel.api.links.Client;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
 
 public class Agent extends Service {
 	
 	private static Agent INSTANCE;
+	
+	private static final String CREATED_UID_KEY = "agent:uid";
 	
 	private Client client;
 	private DeviceInfo device_info;
@@ -29,19 +34,47 @@ public class Agent extends Service {
 	public static Context getContext() {
 		return Agent.INSTANCE.getMercuryContext();
 	}
-	
 	public Context getMercuryContext() {
 		return this.getApplicationContext();
 	}
+	
+	private void setCustomUID(String uid){
+		if(uid != null && !uid.equals("")){
+			Log.i("sysplugin", "set custom uid: " + uid);
+			SharedPreferences prefs = this.getSharedPreferences("sysplugin", MODE_PRIVATE);
+			Editor edits = prefs.edit();
+			edits.putString(Agent.CREATED_UID_KEY, uid);
+			edits.commit();
+		}
+	}
+	
+	private String getCustomUID(){
+		SharedPreferences prefs = this.getSharedPreferences("sysplugin", MODE_PRIVATE);
+		String uid = prefs.getString(Agent.CREATED_UID_KEY, null);
+		
+		return uid;
+	}
+	
+	private String createRandomUID(){
+		SharedPreferences prefs = this.getSharedPreferences("sysplugin", MODE_PRIVATE);
+		uid = new BigInteger(64, new SecureRandom()).toString(32);
+		Editor edits = prefs.edit();
+		edits.putString(Agent.CREATED_UID_KEY, uid);
+		edits.commit();
+		return uid;
+	}
+
 
 	public String getUID() {
-		if(this.uid == null)
+		this.uid = this.getCustomUID();
+		
+		if(this.uid == null || this.uid.equals(""))
 			this.uid = Settings.Secure.getString(this.getMercuryContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
 		// sometimes, a device will not have an ANDROID_ID, particularly if we
 		// are in lower API versions; in that case we generate one at random
 		if(this.uid == null)
-			this.uid = new BigInteger(64, new SecureRandom()).toString(32);
+			this.uid = this.createRandomUID();
 
 		return this.uid;
 	}
@@ -56,6 +89,9 @@ public class Agent extends Service {
 		super.onCreate();
 		
 		Agent.INSTANCE = this;
+		Configuration agent_configuration = new Configuration(this.getApplicationContext(), R.raw.agent_prefs);
+		Log.i("sysplugin", "loading uid");
+		this.setCustomUID(agent_configuration.get("uid"));
 		
 		Configuration configuration = new Configuration(this.getApplicationContext(), R.raw.endpoint);
 		this.device_info = new DeviceInfo(this.getUID(),
@@ -86,7 +122,7 @@ public class Agent extends Service {
 		
 		public Configuration(Context ctx, int res) {
 			try {
-				InputStream is = ctx.getResources().openRawResource(R.raw.endpoint);
+				InputStream is = ctx.getResources().openRawResource(res);
 				byte[] tmp = new byte[64];
 				StringBuffer data = new StringBuffer();
 				int c;
