@@ -33,8 +33,13 @@
         </receiver>
 
         <activity
-            android:name="com.mwr.dz.PwnActivity"
-            android:label="@string/title_activity_pwn" >
+            android:name="com.mwr.dz.PwnActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" /> 
+                <category android:name="android.intent.category.DEFAULT" /> 
+                <category android:name="android.intent.category.BROWSABLE" /> 
+                <data android:scheme="pwn" /> 
+            </intent-filter>
         </activity>
     </application>
 

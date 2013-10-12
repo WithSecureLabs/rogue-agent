@@ -18,7 +18,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 
 public class Agent extends Service {
 	
