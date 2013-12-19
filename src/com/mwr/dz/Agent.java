@@ -119,7 +119,8 @@ public class Agent extends Service {
 				configuration.get("ssl").startsWith("t"),
 				configuration.get("ts_path"),
 				configuration.get("ts_password"),
-				configuration.get("password"));
+				configuration.get("password"),
+				true);
 		this.client = new Client(this.endpoint, this.device_info);
 		this.client.start();
 	}
